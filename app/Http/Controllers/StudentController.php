@@ -57,12 +57,19 @@ class StudentController extends Controller
             'address' => 'required',
             'date_of_birth' => 'required',
             'image' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'pdf' => 'nullable|mimes:pdf|max:5120', // PDF validation (Max: 5MB)
 
         ]);
 
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('students', 'public');
+        }
+
+        // Handle PDF upload
+        $pdfPath = null;
+        if ($request->hasFile('pdf')) {
+            $pdfPath = $request->file('pdf')->store('students/pdfs', 'public');
         }
 
 
@@ -76,6 +83,7 @@ class StudentController extends Controller
             'address' => $request->address,
             'date_of_birth' => $request->date_of_birth,
             'image' => $imagePath,
+            'pdf' => $pdfPath, // Store PDF path
         ]);
 
         $user = User::find(9); // Get the first user (or change this logic as needed)
@@ -90,9 +98,25 @@ class StudentController extends Controller
 
         return response()->json(['message' => 'Notification sent successfully!']);
 
-
         // return redirect()->back()->with('success', 'Registration Successful');
     }
+
+    //  /**
+    //  * Handle student application resubmission.
+    //  */
+    // public function resubmit(Request $request, Student $student)
+    // {
+    //     $validatedData = $request->validate([
+    //         'name' => 'sometimes|required|string',
+    //         'email' => 'sometimes|required|email',
+    //         'phone' => 'sometimes|required|string',
+    //     ]);
+
+    //     // Update only the resubmitted fields
+    //     $student->update($validatedData + ['status' => 'pending', 'rejected_fields' => null]);
+
+    //     return back()->with('success', 'Application resubmitted successfully.');
+    // }
 
     // public function notifyAdmin()
     // {

@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\StudentResource\Pages;
 use App\Filament\Resources\StudentResource\RelationManagers;
 use App\Models\Student;
+use App\Notifications\StudentRegisteredNotification;
+// use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -12,11 +14,13 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Notifications\Notification;
 
 
 class StudentResource extends Resource
@@ -76,6 +80,15 @@ class StudentResource extends Resource
                     ->disk('public') // Make sure the file is uploaded to 'public' disk
                     ->directory('students') // Specify the folder where the image will be saved
                     ->visibility('public'), // Ensure the image is publicly accessible
+                    
+                FileUpload::make('pdf')
+                    ->label('Upload PDF')
+                    ->storeFileNamesIn('pdf')
+                    ->disk('public')
+                    ->directory('students/pdfs')
+                    ->acceptedFileTypes(['application/pdf'])
+                    ->visibility('public')
+                    ->maxSize(5120),
             ]);
     }
 
@@ -106,6 +119,15 @@ class StudentResource extends Resource
                     ->label('Address'),
                 Tables\Columns\TextColumn::make('date_of_birth')
                     ->label('DOB'),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge(),
+                Tables\Columns\TextColumn::make('pdf')
+                    ->label('PDF File')
+                    ->formatStateUsing(fn ($record) => $record->pdf 
+                        ? '<a href="' . asset('storage/' . $record->pdf) . '" target="_blank" class="text-blue-500 underline">Download</a>' 
+                        : 'No File')
+                    ->html(),
                 
                 // TextColumn::make('classrooms.name')
                 //     ->label('Classrooms')
@@ -118,9 +140,10 @@ class StudentResource extends Resource
                 //
             ])
             ->actions([
+
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                
+    
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

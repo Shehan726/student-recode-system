@@ -47,4 +47,13 @@ class StudentRegisteredNotification extends Notification implements ShouldQueue
 //         'body' => 'A new student has been registered.',
 //     ]);
 // }
+
+    public function toDatabase($notifiable)
+    {
+        return [
+            'title' => 'Your application has been rejected',
+            'message' => 'Please correct the highlighted fields before resubmitting.',
+            'rejected_fields' => json_decode($this->student->rejected_fields, true),
+        ];
+    }
 }

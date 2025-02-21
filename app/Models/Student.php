@@ -29,7 +29,8 @@ class Student extends Model
         'type',
         'address',
         'date_of_birth',
-        'image', 
+        'image',
+        'pdf', 
     ];
     
     // public function classrooms()
