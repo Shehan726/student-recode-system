@@ -15,6 +15,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -51,22 +52,45 @@ class StudentResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('nic')
                     ->required()
-                    ->maxLength(255),
-                // Forms\Components\TextInput::make('type')
-                //     ->maxLength(255)
-                //     ->required(),
+                    ->maxLength(255)
+                    ->required(),
 
                 Forms\Components\Select::make('type')
                     ->options([
                         'Class A' => 'Class A',
                         'Class B' => 'Class B',
-                ])->required()
-                        ->multiple()
+                    ])->required()
+                    ->multiple()
                     ->relationship('classrooms', 'type'),
 
                 Forms\Components\TextInput::make('address')
                     ->required()
                     ->maxLength(255),
+
+
+                // Forms\Components\TextInput::make('review_code')
+                //     ->label('Review Code')
+                //     ->required()
+                //     ->afterStateUpdated(function ($state, $record) {
+                //         if ($state === 'APPROVE123') {
+                //             $record->status = 'approved';
+                //         } elseif ($state === 'REJECT456') {
+                //             $record->status = 'rejected';
+                //         } else {
+                //             $record->status = 'pending';
+                //         }
+                //         $record->save();
+                //     }),
+
+                Forms\Components\Select::make('status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'approved' => 'Approved',
+                        'rejected' => 'Rejected',
+                    
+                    ]),
+                    // ->disabled(),
+
                 DatePicker::make('date_of_birth')
                     ->label('Date Of Birth')
                     ->required()
@@ -75,12 +99,12 @@ class StudentResource extends Resource
                     ->maxDate(now()),
                 FileUpload::make('image')
                     ->label('Profile Image')
-                    ->image() 
+                    ->image()
                     // ->directory('uploads/users') 
                     ->disk('public') // Make sure the file is uploaded to 'public' disk
                     ->directory('students') // Specify the folder where the image will be saved
                     ->visibility('public'), // Ensure the image is publicly accessible
-                    
+
                 FileUpload::make('pdf')
                     ->label('Upload PDF')
                     ->storeFileNamesIn('pdf')
@@ -113,28 +137,34 @@ class StudentResource extends Resource
                     ->label('Phone'),
                 Tables\Columns\TextColumn::make('nic')
                     ->label('NIC'),
-                Tables\Columns\TextColumn::make('type')               
-                     ->label('Class Type'),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Class Type'),
                 Tables\Columns\TextColumn::make('address')
                     ->label('Address'),
                 Tables\Columns\TextColumn::make('date_of_birth')
                     ->label('DOB'),
-                Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
-                    ->badge(),
+        
+                BadgeColumn::make('status')
+                ->label('Status')
+                ->color(fn ($state) => match ($state) {
+                    'pending' => 'warning',  // Yellow
+                    'approved' => 'success', // Green
+                    'rejected' => 'danger',  // Red
+                }),
+    
                 Tables\Columns\TextColumn::make('pdf')
                     ->label('PDF File')
-                    ->formatStateUsing(fn ($record) => $record->pdf 
-                        ? '<a href="' . asset('storage/' . $record->pdf) . '" target="_blank" class="text-blue-500 underline">Download</a>' 
+                    ->formatStateUsing(fn($record) => $record->pdf
+                        ? '<a href="' . asset('storage/' . $record->pdf) . '" target="_blank" class="text-blue-500 underline">Download</a>'
                         : 'No File')
                     ->html(),
-                
+
                 // TextColumn::make('classrooms.name')
                 //     ->label('Classrooms')
                 //     // ->badge() // Shows classes as badges
                 //     // ->limit(3), // Show max 3 classes in table
-                
-                
+
+
             ])
             ->filters([
                 //
@@ -143,7 +173,7 @@ class StudentResource extends Resource
 
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-    
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
