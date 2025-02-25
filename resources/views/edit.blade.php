@@ -61,5 +61,12 @@
                @if(!in_array('image', $rejectedFields)) disabled @endif>
     </div>
 
+    <!-- 🔹 PDF Upload Section -->
+    <div>
+        <label>Upload PDF</label>
+        <input type="file" name="pdf" accept="application/"
+               @if(!in_array('pdf', $rejectedFields)) disabled @endif>
+    </div>
+
     <button type="submit">Re-submit</button>
 </form>

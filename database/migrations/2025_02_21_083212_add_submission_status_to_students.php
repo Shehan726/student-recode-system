@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('students', function (Blueprint $table) {
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->string('review_code')->nullable();
+            // $table->string('review_code')->nullable();
         });
     }
 
@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('students', function (Blueprint $table) {
-            $table->dropColumn(['status', 'review_code']);
+            $table->dropColumn(['status']);
 
         });
     }

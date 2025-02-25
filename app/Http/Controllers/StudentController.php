@@ -39,8 +39,6 @@ class StudentController extends Controller
         // ]);
     }
 
-
-
     public function create()
     {
         return view('student.register');
@@ -57,7 +55,7 @@ class StudentController extends Controller
             'address' => 'required',
             'date_of_birth' => 'required',
             'image' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
-            'pdf' => 'nullable|mimes:pdf|max:5120', // PDF validation (Max: 5MB)
+            'pdf' => 'nullable|file|mimes:pdf|max:2048',
 
         ]);
 
@@ -84,6 +82,7 @@ class StudentController extends Controller
             'date_of_birth' => $request->date_of_birth,
             'image' => $imagePath,
             'pdf' => $pdfPath, // Store PDF path
+            'status' => 'pending',
         ]);
 
         $user = User::find(9); // Get the first user (or change this logic as needed)
@@ -99,52 +98,10 @@ class StudentController extends Controller
         return response()->json(['message' => 'Notification sent successfully!']);
 
         // return redirect()->back()->with('success', 'Registration Successful');
+        
     }
 
-    //  /**
-    //  * Handle student application resubmission.
-    //  */
-    // public function resubmit(Request $request, Student $student)
-    // {
-    //     $validatedData = $request->validate([
-    //         'name' => 'sometimes|required|string',
-    //         'email' => 'sometimes|required|email',
-    //         'phone' => 'sometimes|required|string',
-    //     ]);
-
-    //     // Update only the resubmitted fields
-    //     $student->update($validatedData + ['status' => 'pending', 'rejected_fields' => null]);
-
-    //     return back()->with('success', 'Application resubmitted successfully.');
-    // }
-
-    // public function notifyAdmin()
-    // {
-    //     $admin = User::find(1); // Assuming user ID 1 is the admin
-    //     $studentName = 'John Doe';
-    //     $studentId = 123;
-
-    //     if ($admin) {
-    //         $admin->notify(new StudentRegisteredNotification($studentName, $studentId));
-    //         return response()->json(['message' => 'Notification sent']);
-    //     }
-
-    //     return response()->json(['message' => 'Admin not found'], 404);
-    // }
-
-    // public function sendTestNotification()
-    
-    // {
-    //     $user = User::first(); // Get the first user (or change this logic as needed)
-        
-
-    //     Notification::make()
-    //         ->title('Test Notification')
-    //         ->body('This is a test notification')
-    //         ->sendToDatabase($user);
-
-    //     return response()->json(['message' => 'Notification sent successfully!']);
-    // }
+   
 
 
 }

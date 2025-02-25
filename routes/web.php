@@ -21,5 +21,5 @@ Route::post('/register', [StudentController::class, 'store'])->name('store');
 // Route::get('/send-notification', [StudentController::class, 'notifyAdmin']);
 Route::get('/send-test-notification', [StudentController::class, 'sendTestNotification']);
 
-// Route::post('/students/{student}/resubmit', [StudentController::class, 'resubmit'])
-//     ->name('students.resubmit');
+//  Route::post('/students/{student}/resubmit', [StudentController::class, 'resubmit'])
+//      ->name('students.resubmit');

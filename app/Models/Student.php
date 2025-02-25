@@ -33,7 +33,7 @@ class Student extends Model
         'image',
         'pdf',
         'status',
-        'review_code',
+       
          
     ];
 

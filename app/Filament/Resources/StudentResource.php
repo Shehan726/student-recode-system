@@ -87,9 +87,9 @@ class StudentResource extends Resource
                         'pending' => 'Pending',
                         'approved' => 'Approved',
                         'rejected' => 'Rejected',
-                    
+
                     ]),
-                    // ->disabled(),
+                // ->disabled(),
 
                 DatePicker::make('date_of_birth')
                     ->label('Date Of Birth')
@@ -112,7 +112,7 @@ class StudentResource extends Resource
                     ->directory('students/pdfs')
                     ->acceptedFileTypes(['application/pdf'])
                     ->visibility('public')
-                    ->maxSize(5120),
+                    ->maxSize(2048),
             ]);
     }
 
@@ -143,15 +143,15 @@ class StudentResource extends Resource
                     ->label('Address'),
                 Tables\Columns\TextColumn::make('date_of_birth')
                     ->label('DOB'),
-        
+
                 BadgeColumn::make('status')
-                ->label('Status')
-                ->color(fn ($state) => match ($state) {
-                    'pending' => 'warning',  // Yellow
-                    'approved' => 'success', // Green
-                    'rejected' => 'danger',  // Red
-                }),
-    
+                    ->label('Status')
+                    ->color(fn($state) => match ($state) {
+                        'pending' => 'warning',  // Yellow
+                        'approved' => 'success', // Green
+                        'rejected' => 'danger',  // Red
+                    }),
+
                 Tables\Columns\TextColumn::make('pdf')
                     ->label('PDF File')
                     ->formatStateUsing(fn($record) => $record->pdf
@@ -176,7 +176,7 @@ class StudentResource extends Resource
 
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
