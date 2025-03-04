@@ -30,6 +30,8 @@ class StudentStatusUpdated extends Notification
             default => 'Your application is still under review.',
         };
 
+
+        
         return (new MailMessage)
             ->subject('Application Status Update')
             ->line($message)
